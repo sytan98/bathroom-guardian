@@ -15,7 +15,7 @@ class telegramNotifierBot():
     def start(self, update, context):
         self.botInstance = context.bot
         self.botInstance.send_message(update.effective_chat.id,
-                                text="Welcome! This bot does nothing.")
+                                text="Welcome! Please enter the password.")
 
         return PRE_AUTH
 
@@ -25,7 +25,7 @@ class telegramNotifierBot():
             if chatId not in self.chatIds:
                 self.chatIds.append(chatId)
 
-            update.message.reply_text("Welcome ;)")
+            update.message.reply_text("Welcome!")
             return POST_AUTH
         else:
             update.message.reply_text("I told you it does nothing.")
