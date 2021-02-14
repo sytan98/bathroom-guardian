@@ -1,5 +1,5 @@
 from detection.recognizer import face_detection
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import time
 from datetime import datetime
 from telegram_notifier_bot import secret
@@ -13,17 +13,20 @@ def sendMessage(message: str):
 
 trainerfile = 'detection/trainer/trainer.yml'
 cascadepath = 'detection/Cascades/haarcascade_frontalface_default.xml'
+modelfile =  "detection/models/opencv_face_detector_uint8.pb"
+configfile = "detection/models/opencv_face_detector.pbtxt"
 names = ['None', 'Siyu', 'JQ', 'Sherwin', 'Tianyi']
 
-GPIO setup
+# GPIO setup
 GPIO.setmode(GPIO.BOARD)
 channel = 31
 GPIO.setup(channel, GPIO.IN)
 
-cv_instance = face_detection(trainerfile, cascadepath, names)
+cv_instance = face_detection(trainerfile, cascadepath, names, modelfile, configfile)
 
 while True:
-    has_face, names = cv_instance.get_face()
+    has_face, names = cv_instance.recognise_face()
+    # print(has_face, names)
     message = str(has_face) + str(names)
 
     if GPIO.input(channel) == 1 and has_face:
