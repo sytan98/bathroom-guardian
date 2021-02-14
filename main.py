@@ -27,7 +27,7 @@ while True:
 
     if (GPIO.input(channel) == 1 and has_face):
         print(str(names) + "detected!")
-        sendMessage(names + " detected!")
+        sendMessage(str(names) + " detected!")
     else:
         print("No face detected!")
         sendMessage("No face detected!")
