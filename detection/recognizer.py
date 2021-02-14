@@ -1,11 +1,5 @@
 import cv2
 import numpy as np
-import os
-
-import cv2
-import numpy as np
-import os
-
 
 class face_detection:
     names = [] 

@@ -1,5 +1,5 @@
 from detection.recognizer import face_detection
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 from datetime import datetime
 from telegram_notifier_bot import secret
