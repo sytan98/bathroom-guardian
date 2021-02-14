@@ -1,6 +1,7 @@
 from detection.recognizer import face_detection
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
 from telegram_notifier_bot import secret
 from multiprocessing.connection import Client
 
@@ -14,7 +15,7 @@ trainerfile = 'detection/trainer/trainer.yml'
 cascadepath = 'detection/Cascades/haarcascade_frontalface_default.xml'
 names = ['None', 'Siyu', 'JQ', 'Sherwin', 'Tianyi']
 
-# GPIO setup
+GPIO setup
 GPIO.setmode(GPIO.BOARD)
 channel = 31
 GPIO.setup(channel, GPIO.IN)
@@ -25,11 +26,11 @@ while True:
     has_face, names = cv_instance.get_face()
     message = str(has_face) + str(names)
 
-    if (GPIO.input(channel) == 1 and has_face):
-        print(str(names) + "detected!")
-        sendMessage(str(names) + " detected!")
+    if GPIO.input(channel) == 1 and has_face:
+        print(names[0] + " has entered the toilet at" + str(datetime.now()))
+        sendMessage(names[0] + " has entered the toilet at " + str(datetime.now()))
     else:
         print("No face detected!")
-        sendMessage("No face detected!")
     
     time.sleep(0.5)
+
