@@ -26,9 +26,10 @@ while True:
     message = str(has_face) + str(names)
 
     if (GPIO.input(channel) == 1 and has_face):
-        print(names + "dectected!")
+        print(str(names) + "detected!")
         sendMessage(names + " detected!")
     else:
         print("No face detected!")
+        sendMessage("No face detected!")
     
     time.sleep(0.5)
