@@ -11,10 +11,13 @@ class face_detection:
     minW = 0
     minH = 0
 
-    def __init__(self, trainerfile, cascadepath, names):
+    def __init__(self, trainerfile, cascadepath, names, modelFile, configFile):
         self.names = names
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.faceCascade = cv2.CascadeClassifier(cascadepath)
+        self.net = cv2.dnn.readNetFromTensorflow(modelFile, configFile)
+
+        self.net.setPreferableBackend(cv2.dnn.DNN_TARGET_CPU)
         self.recognizer.read(trainerfile)
         self.cam = cv2.VideoCapture(0)
         self.cam.set(3, 640)
@@ -25,8 +28,8 @@ class face_detection:
     # Returns a single frame from the camera
     def get_frame(self):
         ret, img = self.cam.read()
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        return gray
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return img
 
     # Returns tuple of (boolean, [names]) where names are the faces detected
     # and boolean is whether a face is detected
@@ -38,7 +41,32 @@ class face_detection:
             minNeighbors=5,
             minSize=(int(self.minW), int(self.minH)),
         )
+        return gray, faces
 
+    def get_face_ssd(self):
+        img = self.get_frame()    
+        frameHeight = img.shape[0]
+        frameWidth = img.shape[1]
+        blob = cv2.dnn.blobFromImage(img, 1.0, (300,300), [104,117,123], False, False,)
+        self.net.setInput(blob)
+        detections = self.net.forward()
+        faces = []
+        for i in range(detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+            if confidence > 0.7:
+                x1 = int(detections[0, 0, i, 3] * frameWidth)
+                y1 = int(detections[0, 0, i, 4] * frameHeight)
+                x2 = int(detections[0, 0, i, 5] * frameWidth)
+                y2 = int(detections[0, 0, i, 6] * frameHeight)
+                w = x2 - x1
+                h = y2 - y1
+                faces.append((x1, y1, w, h))
+        return img, faces
+
+    def recognise_face(self):
+        img, faces = self.get_face_ssd()
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         detected_names = []
 
         for (x, y, w, h) in faces:
